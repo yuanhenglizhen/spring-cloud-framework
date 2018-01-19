@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="hlej.framework.register" default="deploy" basedir=".">
+	<property name="app.home" value="." />
+	<property name="local.home" value="D:/hlejcloud/framework" />
+	<property name="target.home" value="/usr/local/hlejcloud/framework" />
+	<property name="jar.name" value="${ant.project.name}-0.0.1-SNAPSHOT.jar" />
+
+	<property name="host.home" value="10.10.1.184" />
+	<property name="host.user" value="root" />
+	<property name="host.password" value="123456" />
+
+	<tstamp>
+		<format property="stamp" pattern="yyyy-MM-dd_HH_mm_ss" unit="hour" />
+		<format property="TODAY" pattern="yyyyMMdd" />
+	</tstamp>
+	<property name="bakup_dir" value="bakupjar_${TODAY}" />
+	
+	<!-- 生成安装目录 -->
+	<target name="mkdirtargetdir">
+		<echo>
+			${host.home} create bakupfile ${target.home}......
+		</echo>
+		<sshexec host="${host.home}" username="${host.user}" password="${host.password}" trust="true" command="
+				if [ ! -d ${target.home} ]; then
+					mkdir -p ${target.home};
+				fi;
+				" />
+	</target>
+
+	<!-- 生成备份目录 -->
+	<target name="mkdirbakdir" depends="mkdirtargetdir">
+		<echo>
+			${host.home} create bakupfile ${bakup_dir}......
+		</echo>
+		<sshexec host="${host.home}" username="${host.user}" password="${host.password}" trust="true" command="
+				cd ${target.home}; 
+				if [ ! -d ${bakup_dir} ]; then
+					mkdir -p ${bakup_dir};
+				fi;
+				" />
+	</target>
+
+
+
+	<target name="bakupjar" depends="mkdirbakdir">
+		<echo>
+			${host.home}:备份服务目录......
+		</echo>
+		<sshexec host="${host.home}" username="${host.user}" password="${host.password}" trust="true" command="
+			cd ${target.home}/${bakup_dir};
+			if [ `ls -l |grep &quot;${jar.name}&quot;|wc -l` -gt 0 ] ;then
+						ls -t *${jar.name}|awk 'NR>5{print $0|&quot; xargs rm -r &quot; }';
+			fi;
+			cd ${target.home}/${ant.project.name}/lib;
+			if [ -f ${jar.name} ]; then
+				mv ${jar.name} ${target.home}/${bakup_dir}/${stamp}_${jar.name};
+			fi;
+			" />
+	</target>
+	<!-- 重新上传文件文件 -->
+	<target name="uploaJar" depends="bakupjar">
+		<echo>
+				${host.home}:上传${zip.name}......
+			</echo>
+		<scp file="${local.home}/${ant.project.name}/lib/${jar.name}" todir="${host.user}:${host.password}@${host.home}:${target.home}/${ant.project.name}/lib" trust="true" />
+	</target>
+
+	<target name="restart" depends="uploaJar">
+		<echo>
+			${host.home}:启动服务......
+		</echo>
+		<sshexec host="${host.home}" username="${host.user}" password="${host.password}" trust="true" command="
+			cd ${target.home}/${ant.project.name}/bin;
+			chmod +x *.sh;
+			sh execute.sh restart;
+			" />
+	</target>
+
+	<target name="deploy" depends="restart">
+	</target>
+</project>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="hlej.framework.register" default="deploy" basedir=".">
+	<property name="app.home" value="." />
+	<property name="local.home" value="D:/hlejcloud/framework" />
+	<property name="target.home" value="/usr/local/hlejcloud/framework" />
+	<property name="zip.name" value="${ant.project.name}.zip" />
+
+	<property name="host.home" value="10.10.1.184" />
+	<property name="host.user" value="root" />
+	<property name="host.password" value="123456" />
+
+	<tstamp>
+		<format property="stamp" pattern="yyyy-MM-dd_HH_mm_ss"  unit="hour" />
+		<format property="TODAY" pattern ="yyyyMMdd"  />
+	</tstamp>
+	<property name="bakup_dir" value="bakup_${TODAY}" />
+	<target name="packzip">
+		<zip  destfile="${local.home}/${zip.name}" basedir="${local.home}/${ant.project.name}">
+		</zip>
+	</target>
+
+	<!-- 生成安装目录 -->
+	<target name="mkdirtargetdir"  depends="packzip" >
+		<echo>
+			${host.home} 检查安装目录${target.home}是否存在，如果不存在，则创建......
+		</echo>
+		<sshexec host="${host.home}" username="${host.user}" password="${host.password}" trust="true"
+				command="
+				if [ ! -d ${target.home} ]; then
+					mkdir -p ${target.home};
+				fi;
+				"
+			/>
+	</target>
+
+	<!-- 生成备份目录 -->
+	<target name="mkdirbakdir" depends="mkdirtargetdir" >
+		<echo>
+			${host.home}  检查安装目录${bakup_dir}是否存在，如果不存在，则创建......
+		</echo>
+		<sshexec host="${host.home}" username="${host.user}" password="${host.password}" trust="true"
+				command="
+				cd ${target.home}; 
+				if [ ! -d ${bakup_dir} ]; then
+					mkdir -p ${bakup_dir};
+				fi;
+				"
+			/>
+	</target>
+	<!-- 删除 上次上传的文件 -->
+	<target name="delete" depends="mkdirbakdir">
+		<echo>
+			${host.home}:删除上次上传的安装包${zip.name}......
+		</echo>
+		<sshexec host="${host.home}" username="${host.user}" password="${host.password}" trust="true" command="cd ${target.home};rm -rf ${zip.name};" />
+	</target>
+
+
+
+	<!-- 重新上传文件文件 -->
+	<target name="uploadzip" depends="delete">
+		<echo>
+			${host.home}:上传新的安装包${zip.name}......
+		</echo>
+		<scp file="${local.home}/${zip.name}" todir="${host.user}:${host.password}@${host.home}:${target.home}" trust="true" />
+	</target>
+
+	<target name="bakupdir" depends="uploadzip">
+		<echo>
+			${host.home}:备份服务目录,保留最新的5个备份文件......
+		</echo>
+		<sshexec host="${host.home}" username="${host.user}" password="${host.password}" trust="true" command="
+			cd ${target.home}/${bakup_dir};
+			if [ `ls -l |grep &quot;${ant.project.name}&quot;|wc -l` -gt 0 ] ;then
+			ls -d -t ${ant.project.name}*|awk 'NR>5{print $0|&quot; xargs rm -r &quot; }';
+			fi;
+			cd ${target.home};
+			if [ -d ${ant.project.name} ]; then
+				mv ${ant.project.name} ${bakup_dir}/${ant.project.name}_${stamp};
+			fi;
+			" />
+	</target>
+
+	<target name="unzip" depends="bakupdir">
+		<echo>
+			${host.home}:解压服务安装包...
+		</echo>
+		<sshexec host="${host.home}" username="${host.user}" password="${host.password}" trust="true" command="
+			cd ${target.home};
+			unzip -oq ${zip.name} -d ${ant.project.name};" />
+	</target>
+	<target name="deletezip" depends="unzip">
+		<echo>
+							${host.home}:删除安装文件...
+			</echo>
+		<sshexec host="${host.home}" username="${host.user}" password="${host.password}" trust="true" command="
+				cd ${target.home}; 
+				if [ -d ${zip.name} ]; then
+					rm -rf ${zip.name};
+				fi;
+				" />
+
+	</target>
+
+	<target name="copy_config" depends="deletezip">
+		<echo>
+						${host.home}:copy配置文件...
+		</echo>
+		<sshexec host="${host.home}" username="${host.user}" password="${host.password}" trust="true" command="
+			cd ${target.home}; 
+			if [ -d ${bakup_dir}/${ant.project.name}_${stamp} ]; then
+				cp -f ${bakup_dir}/${ant.project.name}_${stamp}/config/*.* ${ant.project.name}/config/;
+			fi;
+			" />
+
+	</target>
+
+
+	<target name="restart" depends="copy_config">
+		<echo>
+			${host.home}:启动服务......
+		</echo>
+		<sshexec host="${host.home}" username="${host.user}" password="${host.password}" trust="true" command="
+			cd ${target.home}/${ant.project.name}/bin;
+			chmod +x *.sh;
+			sh execute.sh restart;
+			"
+		/>
+	</target>
+
+	<target name="build" depends="restart">
+		<echo>
+			target.home = ${target.home}
+			file.zip = ${target.home}/${zip.name}
+		</echo>
+	</target>
+	<target name="deploy" depends="build">
+	</target>
+</project>

@@ -1,0 +1,19 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.huilian.hlej</groupId>
+		<artifactId>hlej.parent</artifactId>
+	<version>2.0.0-RELEASE</version>
+		<relativePath>../../hlej.parent/pom.xml</relativePath>
+	</parent>
+	<artifactId>hlej.base.parent</artifactId>
+	<packaging>pom</packaging>
+	<modules>
+		<module>hlej.base.client</module>
+		<module>hlej.base.service</module>
+		<module>hlej.base.api</module>
+		<module>hlej.base.task</module>
+		<module>hlej.base.web</module>
+	</modules>
+</project>

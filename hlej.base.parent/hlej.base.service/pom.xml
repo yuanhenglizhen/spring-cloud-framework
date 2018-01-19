@@ -1,0 +1,71 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.huilian.hlej</groupId>
+		<artifactId>hlej.base.parent</artifactId>
+		<version>2.0.0-RELEASE</version>
+	</parent>
+	<artifactId>hlej.base.service</artifactId>
+	<packaging>pom</packaging>
+	<dependencies>
+		<!-- service类型项目固定部分 -->
+		<!-- Spring Boot核心Starter，包含自动配置、日志、yaml配置文件的支持 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<exclusions>
+				<!-- 去除spring-boot默认日志依赖包 -->
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- 支持产品环境下的一些功能，比如管理应用、指标度量及监控等 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<!-- 提供对常用测试框架的支持，包括JUnit，Hamcrest以及Mockito等。 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!--务发现与服务注册 -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-eureka</artifactId>
+		</dependency>
+		<!-- service类型项目固定部分 -->
+
+		<!-- session
+		<dependency>
+			<groupId>org.springframework.session</groupId>
+			<artifactId>spring-session-data-redis</artifactId>
+		</dependency> -->
+		<!-- redis 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		-->
+		<!-- 日志相关配置 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
+		<!-- 日志相关配置 -->
+		<dependency>
+			<groupId>com.huilian.hlej</groupId>
+			<artifactId>hlej.common.core</artifactId>
+			<version>2.0.0-RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>com.huilian.hlej</groupId>
+			<artifactId>hlej.common.mybatis</artifactId>
+			<version>2.0.0-RELEASE</version>
+		</dependency>
+	</dependencies>
+</project>

@@ -1,0 +1,31 @@
+##服务配置
+server:
+  port: ${PORT:11000}
+  
+##应用名称
+spring: 
+  application: 
+    name: eureka-registy-center
+
+##注册中心配置
+eureka: 
+  instance: 
+    hostname: localhost
+    preferIpAddress: true
+  server:
+    enable-self-preservation: false           # 关闭自我保护模式（缺省为打开）
+    eviction-interval-timer-in-ms: 1000       # 续期时间，即扫描失效服务的间隔时间（缺省为60*1000ms）
+  ##客户端访问配置
+  client: 
+    registerWithEureka: false
+    fetchRegistry:  false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+    #enable-self-preservation: false           # 关闭自我保护模式（缺省为打开）
+    #eviction-interval-timer-in-ms: 1000       # 续期时间，即扫描失效服务的间隔时间（缺省为60*1000ms）
+  ##环境配置
+  ##配置数据中心名称 ，默认：default
+  #datacenter: cloud
+##日志文件配置
+logging: 
+  config: classpath:log4j2.xml

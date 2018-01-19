@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.huilian.hlej</groupId>
+	<artifactId>hlej.common.parent</artifactId>
+	<version>2.0.0-RELEASE</version>
+	<packaging>pom</packaging>
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<app.encoding>UTF-8</app.encoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<version.template.file>version.txt.template</version.template.file>
+		<version.file>version.txt</version.file>
+		<maven.build.timestamp.format>yyyy-MM-dd.HH:mm:ss</maven.build.timestamp.format>
+		<mysql.version>5.1.44</mysql.version>
+		<mybatis.spring.boot.version>1.3.1</mybatis.spring.boot.version>
+		<lombok.version>1.16.18</lombok.version>
+		<surefire.version>2.17</surefire.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+		</dependency>
+		<!-- 
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-surefire-plugin</artifactId>
+			<version>${surefire.version}</version>
+		</dependency>
+		 -->
+	</dependencies>
+	<modules>
+
+		<module>hlej.common.bus</module>
+		<module>hlej.common.core</module>
+		<module>hlej.common.mybatis</module>
+		<module>hlej.common.sequence</module>
+		<module>hlej.common.validate</module>
+		<module>hlej.common.mongodb</module>
+		<module>hlej.common.elasticJob</module>
+	</modules>
+</project>

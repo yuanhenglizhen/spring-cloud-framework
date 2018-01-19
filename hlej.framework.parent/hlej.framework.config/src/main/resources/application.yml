@@ -1,0 +1,48 @@
+server:
+  port: 11010
+spring:
+  application:
+    name: hlej.framework.config
+#  cloud:
+#    config:
+#      server:
+#        svn:
+#          uri: https://192.168.30.40/svn/rxjr/huilian/branch/20171109hl/common/hlej.common.parent/hlej.common.bus
+#          username: cuiyi
+#          password: 123456
+
+#http://127.0.0.1:11010/neo-config/dev microservice/config-repo/neo-config-dev.properties
+#  cloud:
+#    config:
+#      server:
+#        git:
+#          uri: https://github.com/real52010/microservice/    # 配置git仓库的地址
+#          search-paths: config-repo                             # git仓库地址下的相对地址，可以配置多个，用,分割。
+#          username: real-yqdt@163.com                                             # git仓库的账号
+#          password: real5200                                             # git仓库的密码
+
+
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        
+        native:
+          search-locations: classpath:/service-config/{application}
+
+##eureka配置
+eureka: 
+  client:
+    service-url:
+      defaultZone: http://localhost:11000/eureka/  #注册中心地址
+    registry-fetch-interval-seconds: 5
+  instance:
+    hostname: localhost
+    instanceId: http://${eureka.instance.hostname}:${server.port}
+    lease-renewal-interval-in-seconds: 5      # 心跳时间，即服务续约间隔时间（缺省为30s）
+    lease-expiration-duration-in-seconds: 15  # 发呆时间，即服务续约到期时间（缺省为90s）
+          
+##日志文件配置
+logging: 
+  config: classpath:log4j2.xml
